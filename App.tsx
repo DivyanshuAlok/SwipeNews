@@ -1,118 +1,72 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import React, {useRef, useEffect} from 'react';
+import Animated, {
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
+import {SvgXml} from 'react-native-svg';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+const swipe = `<svg xmlns="http://www.w3.org/2000/svg" height="50" width="50" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path  d="m5 8 7-7 7 7" />
+  <path  d="m5 14 7-7 7 7" />
+  <path  d="m5 20 7-7 7 7" />
+</svg>`;
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+const App = () => {
+  const fadeInOpacity = useSharedValue(0);
+  const moveTop = useSharedValue(0);
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  // const fadeIn = useRef(new Animated.Value(0)).current;
+  // // const moveTop = useRef(new Animated.Value(0)).current;
+  // const scale = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    fadeInOpacity.value = withTiming(1, {
+      duration: 1000,
+    });
+    moveTop.value = withSpring(-200);
+  }, []);
+
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View style={styles.conatiner}>
+      <Animated.View
+        style={{
+          opacity: fadeInOpacity,
+          transform: [{translateY: moveTop}],
+        }}>
+        <Text style={styles.textMain}>Swipe</Text>
+        <Text style={styles.textMain}>News</Text>
+      </Animated.View>
+      <Animated.View>
+        <SvgXml
+          xml={swipe}
+          scaleX={2}
+          scaleY={2}
+          width={50}
+          height={50}
+          stroke={'red'}
+        />
+      </Animated.View>
     </View>
   );
-}
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
+};
 
 export default App;
+
+const styles = StyleSheet.create({
+  conatiner: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textMain: {
+    fontSize: 70,
+    fontWeight: 'bold',
+    color: 'red',
+    lineHeight: 70,
+  },
+});
