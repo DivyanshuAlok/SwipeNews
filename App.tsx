@@ -1,4 +1,5 @@
 import {StyleSheet, Text, View, Dimensions} from 'react-native';
+import {format as prettyFormat} from 'pretty-format';
 import React, {useRef, useEffect} from 'react';
 import Animated, {
   useSharedValue,
@@ -22,11 +23,21 @@ const App = () => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(0);
   const swipe = useSharedValue(0);
-  const fling = Gesture.Pan().onUpdate(e => {
-    console.log('On change', e);
-    swipe.value = e.translationY;
-    // opacity.value = withTiming(0);
-  });
+
+  const fling = Gesture.Pan()
+    .onUpdate(e => {
+      swipe.value = e.translationY;
+    })
+    .onEnd(e => {
+      console.log(prettyFormat(e));
+      if (e.y < -15) {
+        swipe.value = withTiming(-800);
+        opacity.value = withTiming(0);
+      } else {
+        swipe.value = withTiming(0);
+        opacity.value = withTiming(1);
+      }
+    });
 
   useEffect(() => {
     opacity.value = withTiming(1, {
