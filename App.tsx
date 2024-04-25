@@ -22,16 +22,11 @@ const App = () => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(0);
   const swipe = useSharedValue(0);
-  const fling = Gesture.Fling()
-    .direction(Directions.UP)
-    .onFinalize(e => {
-      console.log('On Finalize', e.y);
-      if (e.y < -25) {
-        swipe.value = withTiming(-1000);
-        opacity.value = withTiming(0);
-      }
-    });
-
+  const fling = Gesture.Pan().onChange(e => {
+    console.log('On change', e);
+    swipe.value = e.absoluteY;
+    // opacity.value = withTiming(0);
+  });
   useEffect(() => {
     opacity.value = withTiming(1, {
       duration: 1000,
