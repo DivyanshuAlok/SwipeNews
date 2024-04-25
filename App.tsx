@@ -21,11 +21,15 @@ const windowHeight = Dimensions.get('window').height;
 const App = () => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const swipe = useSharedValue(0);
   const fling = Gesture.Fling()
     .direction(Directions.UP)
-    .onBegin(e => {
-      console.log(e);
-      translateY.value = withTiming(translateY.value + 10, {duration: 100});
+    .onFinalize(e => {
+      console.log('On Finalize', e.y);
+      if (e.y < -25) {
+        swipe.value = withTiming(-1000);
+        opacity.value = withTiming(0);
+      }
     });
 
   useEffect(() => {
@@ -40,7 +44,7 @@ const App = () => {
   }, []);
 
   const svgAnimatedStyle = useAnimatedStyle(() => ({
-    transform: [{translateY: translateY.value + 450}],
+    transform: [{translateY: translateY.value + 450 + swipe.value}],
   }));
 
   return (
