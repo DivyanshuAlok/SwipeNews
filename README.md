@@ -1,1 +1,1 @@
-SVG stroke={currentColor Doesn't work }
+# SVG `stroke={currentColor}` Doesn't work

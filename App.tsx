@@ -4,54 +4,64 @@ import Animated, {
   useSharedValue,
   withSpring,
   withTiming,
+  ReduceMotion,
+  useAnimatedStyle,
 } from 'react-native-reanimated';
-import {SvgXml} from 'react-native-svg';
-
-const swipe = `<svg xmlns="http://www.w3.org/2000/svg" height="50" width="50" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <path  d="m5 8 7-7 7 7" />
-  <path  d="m5 14 7-7 7 7" />
-  <path  d="m5 20 7-7 7 7" />
-</svg>`;
+import SwipeUpSvg from './src/Component/SwipeUpSvg';
+import {
+  Directions,
+  Gesture,
+  GestureDetector,
+  GestureHandlerRootView,
+} from 'react-native-gesture-handler';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
 
 const App = () => {
-  const fadeInOpacity = useSharedValue(0);
-  const moveTop = useSharedValue(0);
-
-  // const fadeIn = useRef(new Animated.Value(0)).current;
-  // // const moveTop = useRef(new Animated.Value(0)).current;
-  // const scale = useRef(new Animated.Value(1)).current;
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const fling = Gesture.Fling()
+    .direction(Directions.UP)
+    .onBegin(e => {
+      console.log(e);
+      translateY.value = withTiming(translateY.value + 10, {duration: 100});
+    });
 
   useEffect(() => {
-    fadeInOpacity.value = withTiming(1, {
+    opacity.value = withTiming(1, {
       duration: 1000,
     });
-    moveTop.value = withSpring(-200);
+    setTimeout(() => {
+      translateY.value = withSpring(-200, {
+        duration: 2000,
+      });
+    }, 1000);
   }, []);
 
+  const svgAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{translateY: translateY.value + 450}],
+  }));
+
   return (
-    <View style={styles.conatiner}>
+    <GestureHandlerRootView style={styles.conatiner}>
       <Animated.View
         style={{
-          opacity: fadeInOpacity,
-          transform: [{translateY: moveTop}],
+          opacity,
+          transform: [{translateY}],
         }}>
         <Text style={styles.textMain}>Swipe</Text>
         <Text style={styles.textMain}>News</Text>
       </Animated.View>
-      <Animated.View>
-        <SvgXml
-          xml={swipe}
-          scaleX={2}
-          scaleY={2}
-          width={50}
-          height={50}
-          stroke={'red'}
-        />
+      <Animated.View style={{opacity}}>
+        <Text>Swipe up to Fetch News</Text>
       </Animated.View>
-    </View>
+      <GestureDetector gesture={fling}>
+        <Animated.View style={svgAnimatedStyle}>
+          <SwipeUpSvg />
+        </Animated.View>
+      </GestureDetector>
+    </GestureHandlerRootView>
   );
 };
 
