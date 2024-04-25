@@ -22,11 +22,12 @@ const App = () => {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(0);
   const swipe = useSharedValue(0);
-  const fling = Gesture.Pan().onChange(e => {
+  const fling = Gesture.Pan().onUpdate(e => {
     console.log('On change', e);
-    swipe.value = e.absoluteY;
+    swipe.value = e.translationY;
     // opacity.value = withTiming(0);
   });
+
   useEffect(() => {
     opacity.value = withTiming(1, {
       duration: 1000,
