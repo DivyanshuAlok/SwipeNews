@@ -1,5 +1,4 @@
 import {StyleSheet, Text, View, Dimensions} from 'react-native';
-import {format as prettyFormat} from 'pretty-format';
 import React, {useRef, useEffect} from 'react';
 import Animated, {
   useSharedValue,
@@ -29,7 +28,7 @@ const App = () => {
       swipe.value = e.translationY;
     })
     .onEnd(e => {
-      console.log(prettyFormat(e));
+      console.log(e);
       if (e.y < -15) {
         swipe.value = withTiming(-800);
         opacity.value = withTiming(0);
