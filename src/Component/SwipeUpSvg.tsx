@@ -14,29 +14,52 @@ const swipe = `<svg xmlns="http://www.w3.org/2000/svg" height="50" width="50" fi
   <path  d="m5 8 7-7 7 7" />
 </svg>`;
 
+const timeOut = 50;
+const commonDuration = 500;
+
 type Props = {};
 
 const SwipeUpSvg = (props: Props) => {
   const translateY = useSharedValue(0);
+  const translateY2 = useSharedValue(0);
+  const translateY3 = useSharedValue(0);
 
   useEffect(() => {
     translateY.value = withRepeat(
       withSequence(
-        withSpring(-30, {duration: 500}),
-        withTiming(0, {duration: 500}),
+        withSpring(-20, {duration: commonDuration}),
+        withTiming(0, {duration: commonDuration}),
       ),
       -1,
     );
+    setTimeout(() => {
+      translateY2.value = withRepeat(
+        withSequence(
+          withSpring(-20, {duration: commonDuration}),
+          withTiming(0, {duration: commonDuration}),
+        ),
+        -1,
+      );
+      setTimeout(() => {
+        translateY3.value = withRepeat(
+          withSequence(
+            withSpring(-20, {duration: commonDuration}),
+            withTiming(0, {duration: commonDuration}),
+          ),
+          -1,
+        );
+      }, timeOut);
+    }, timeOut);
   }, []);
 
   const AnimatedStyleLayer1 = useAnimatedStyle(() => ({
     transform: [{translateY: translateY.value}],
   }));
   const AnimatedStyleLayer2 = useAnimatedStyle(() => ({
-    transform: [{translateY: translateY.value - 20}],
+    transform: [{translateY: translateY2.value - 20}],
   }));
   const AnimatedStyleLayer3 = useAnimatedStyle(() => ({
-    transform: [{translateY: translateY.value - 40}],
+    transform: [{translateY: translateY3.value - 40}],
   }));
 
   return (
